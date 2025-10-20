@@ -1,6 +1,8 @@
 package main
 
 import (
+	"cloudformation/stacks"
+
 	"github.com/aws/aws-cdk-go/awscdk/v2"
 	"github.com/aws/jsii-runtime-go"
 )
@@ -10,8 +12,10 @@ func main() {
 
 	app := awscdk.NewApp(nil)
 
-	awscdk.NewStack(app, jsii.String("MapleStack"), &awscdk.StackProps{
-		Env: env(),
+	stacks.MapleStackFormation(app, "MapleStack", &stacks.CloudformationStackProps{
+		StackProps: awscdk.StackProps{
+			Env: env(),
+		},
 	})
 
 	app.Synth(nil)
