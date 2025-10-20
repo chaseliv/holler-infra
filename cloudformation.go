@@ -12,7 +12,7 @@ func main() {
 
 	app := awscdk.NewApp(nil)
 
-	stacks.MapleStackFormation(app, "MapleStack", &stacks.CloudformationStackProps{
+	stacks.MapleStackFormation(app, "maple-stack", &stacks.CloudformationStackProps{
 		StackProps: awscdk.StackProps{
 			Env: env(),
 		},

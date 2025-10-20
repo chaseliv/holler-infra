@@ -21,31 +21,31 @@ func MapleStackFormation(scope constructs.Construct, id string, props *Cloudform
 	stack := awscdk.NewStack(scope, &id, &sprops)
 
 	// vpc for ecs cluster
-	vpc := awsec2.NewVpc(stack, jsii.String("MapleVPC"), &awsec2.VpcProps{
+	vpc := awsec2.NewVpc(stack, jsii.String("maple-vpc"), &awsec2.VpcProps{
 		MaxAzs:      jsii.Number(2), // Use 2 availability zones
 		NatGateways: jsii.Number(1), // Use 1 NAT gateway to save costs
 	})
 
 	// ecr repo to store docker images
-	ecrRepo := awsecr.NewRepository(stack, jsii.String("MapleECRRepo"), &awsecr.RepositoryProps{
+	ecrRepo := awsecr.NewRepository(stack, jsii.String("maple-ecr-repo"), &awsecr.RepositoryProps{
 		RemovalPolicy: awscdk.RemovalPolicy_DESTROY,
 	})
 	_ = ecrRepo
 
 	// ecs cluster, which is just the grouping of the ecs services
-	ecsCluster := awsecs.NewCluster(stack, jsii.String("MapleECSCluster"), &awsecs.ClusterProps{
+	ecsCluster := awsecs.NewCluster(stack, jsii.String("maple-ecs-cluster"), &awsecs.ClusterProps{
 		Vpc: vpc,
 	})
 
 	// ecs task definition
-	ecsTaskDef := awsecs.NewTaskDefinition(stack, jsii.String("MapleECSTaskDef"), &awsecs.TaskDefinitionProps{
+	ecsTaskDef := awsecs.NewTaskDefinition(stack, jsii.String("maple-ecs-task-def"), &awsecs.TaskDefinitionProps{
 		Compatibility: awsecs.Compatibility_FARGATE,
 		Cpu:           jsii.String("256"),
 		MemoryMiB:     jsii.String("512"),
 	})
 
 	// add container to task definition
-	ecsTaskDef.AddContainer(jsii.String("MapleContainer"), &awsecs.ContainerDefinitionOptions{
+	ecsTaskDef.AddContainer(jsii.String("maple-container"), &awsecs.ContainerDefinitionOptions{
 		Image:          awsecs.ContainerImage_FromRegistry(jsii.String("hello-world"), &awsecs.RepositoryImageProps{}), // placeholder until we push our own image
 		Essential:      jsii.Bool(true),
 		MemoryLimitMiB: jsii.Number(512),
@@ -55,7 +55,7 @@ func MapleStackFormation(scope constructs.Construct, id string, props *Cloudform
 	})
 
 	// ecs service, what actually runs the containers
-	ecsService := awsecs.NewFargateService(stack, jsii.String("MapleECSService"), &awsecs.FargateServiceProps{
+	ecsService := awsecs.NewFargateService(stack, jsii.String("maple-ecs-service"), &awsecs.FargateServiceProps{
 		Cluster:        ecsCluster,
 		TaskDefinition: ecsTaskDef,
 	})
