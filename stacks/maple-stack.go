@@ -44,6 +44,16 @@ func MapleStackFormation(scope constructs.Construct, id string, props *Cloudform
 		MemoryMiB:     jsii.String("512"),
 	})
 
+	// add container to task definition
+	ecsTaskDef.AddContainer(jsii.String("MapleContainer"), &awsecs.ContainerDefinitionOptions{
+		Image:          awsecs.ContainerImage_FromRegistry(jsii.String("hello-world"), &awsecs.RepositoryImageProps{}), // placeholder until we push our own image
+		Essential:      jsii.Bool(true),
+		MemoryLimitMiB: jsii.Number(512),
+		Logging: awsecs.LogDrivers_AwsLogs(&awsecs.AwsLogDriverProps{
+			StreamPrefix: jsii.String("maple"),
+		}),
+	})
+
 	// ecs service, what actually runs the containers
 	ecsService := awsecs.NewFargateService(stack, jsii.String("MapleECSService"), &awsecs.FargateServiceProps{
 		Cluster:        ecsCluster,
