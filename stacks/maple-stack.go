@@ -30,7 +30,6 @@ func MapleStackFormation(scope constructs.Construct, id string, props *Cloudform
 	ecrRepo := awsecr.NewRepository(stack, jsii.String("maple-ecr-repo"), &awsecr.RepositoryProps{
 		RemovalPolicy: awscdk.RemovalPolicy_DESTROY,
 	})
-	_ = ecrRepo
 
 	// ecs cluster, which is just the grouping of the ecs services
 	ecsCluster := awsecs.NewCluster(stack, jsii.String("maple-ecs-cluster"), &awsecs.ClusterProps{
@@ -46,7 +45,7 @@ func MapleStackFormation(scope constructs.Construct, id string, props *Cloudform
 
 	// add container to task definition
 	ecsTaskDef.AddContainer(jsii.String("maple-container"), &awsecs.ContainerDefinitionOptions{
-		Image:          awsecs.ContainerImage_FromRegistry(jsii.String("hello-world"), &awsecs.RepositoryImageProps{}), // placeholder until we push our own image
+		Image:          awsecs.ContainerImage_FromEcrRepository(ecrRepo, jsii.String("latest")),
 		Essential:      jsii.Bool(true),
 		MemoryLimitMiB: jsii.Number(512),
 		Logging: awsecs.LogDrivers_AwsLogs(&awsecs.AwsLogDriverProps{
